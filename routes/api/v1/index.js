@@ -36,21 +36,11 @@ router.get('/test', function(req, res) {
 
 router.post('/login', function( req, res ) {
     console.log(req.body);
-    apiFunctions.signin(req, res);
+    apiFunctions.login(req, res);
 });
 
-router.get('/getUsers', function(req, res) {
-    console.log(req.body);
-    apiFunctions.getUsers(req, res);
-});
-
-router.post('/getUser', function(req, res) {
-    console.log(req.body);
-    apiFunctions.getUserWithId(req.body.userId, res);
-});
-
-router.post('/createUser', function(req, res) {
-    apiFunctions.signup(req, res, function(uid) {
+router.post('/registration', function(req, res) {
+    apiFunctions.registration(req, res, function(uid) {
         if (uid === null) { 
             var error = {
                 "code": 200,

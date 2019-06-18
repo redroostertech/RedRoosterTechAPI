@@ -14,30 +14,6 @@ var invalidPageFailure = { "errorCode": 200, "errorMessage" : "Invalid page numb
 var getOptions = { source: 'cache' };
 
 var kUsers = 'users';
-var kMessages = 'messages';
-var kConversations = 'conversations';
-var kMatches = 'matches';
-var kMapItems = 'map-items';
-
-function validateTwilioResponse (message, res) {
-    console.log(message);
-    if (message.sid === null) {
-        handleError(200, "There was an error sending text.", res);
-    } else {
-        res.status(200).json({
-            "status": 200,
-            "success": {
-                "result": true,
-                "message": "You successfully sent a text via twilio."
-            },
-            "data": null,
-            "error": {
-                "code": null,
-                "message": null
-            }
-        });
-    }
-}
 
 function handleJSONResponse (code, error, success, data, res) {
     res.status(code).json({
@@ -48,8 +24,7 @@ function handleJSONResponse (code, error, success, data, res) {
     });
 }
 
-//  MARK:- Firebase
-
+//  MARK:- Firestore DB
 function retrieveAll(collection, callback) {
     main.firebase.firebase_firestore_db(function(reference) {
         if (!reference) { 
@@ -208,23 +183,6 @@ function addFor(collection, data, callback) {
     });
 }
 
-function loadViewSignin(code, success, error, res) {
-    loadView("main/admin-signin", code, success, null, error, res);
-}
-
-function loadViewSignUp(code, success, venue, error, res) {
-    loadView("main/twilio-signup", code, success, venue, error, res);
-}
-
-function loadView(name, code, success, data, error, res) {
-    res.status(code).render(name, {
-        "status": code,
-        "success": success,
-        "data": data,
-        "error": error
-    });
-}
-
 //  MARK:- Realtime DB
 function add(node, data, callback) {
     console.log(data);
@@ -321,50 +279,9 @@ function update(node, endpoint, value, callback) {
     }); 
 }
 
-//  MARK:- MongoDB
-function addMongoDB(data, callback) {
-    main.mongodb.usergeo(function(collection) {
-        collection.find({
-            userId: {
-                $ne: req.body.userId
-            },
-            location: { 
-                $near: {
-                    $geometry: { 
-                        type: "Point",  
-                        coordinates: [ req.body.longitude, req.body.latitude ] },
-                    $maxDistance: getMeters(req.body.maxDistance)
-                }
-            }
-        }).limit(1).toArray(function(err, docs) {
-            res.status(200).json({
-                "status": 200,
-                "success": { "result" : true, "message" : "Request was successful" },
-                "data": {
-                    "count": docs.length,
-                    "results": docs,
-                },
-                "error": err
-            });
-        });
-    });
-    main.firebase.firebase_firestore_db(function(reference) {
-        if (!reference) { 
-            return callback(genericFailure, genericError , null);
-        } else {
-            reference.collection(collection).add(data).then(function(docRef) {
-                console.log("Document written with ID: ", docRef.id);
-                return callback(genericSuccess, null, docRef);
-            }).catch(function (error) {
-                return callback(genericFailure, error, null);
-            });
-        }
-    });
-}
-
 module.exports = {
 
-    signup: function(req, res, callback) {
+    login: function(req, res, callback) {
         console.log(req.body);
         main.firebase.firebase_auth(function(auth) {
             auth.signOut().then(function() {
@@ -390,7 +307,7 @@ module.exports = {
         });
     },
 
-    signin: function(req, res) {
+    registration: function(req, res) {
         main.firebase.firebase_auth(function(auth) {
             auth.signInWithEmailAndPassword(req.body.emailaddress, req.body.password).then(function () {
                 auth.onAuthStateChanged(function (user) {
@@ -416,21 +333,17 @@ module.exports = {
         });
     },
 
+    createUser: function(req, res) {
+        var object = createEmptyUserObject(req.body.email, req.body.name, req.body.uid, req.body.type, req.body.kidsCount, req.body.maritalStatus, req.body.linkedin, req.body.facebook, req.body.instagram, req.body.ageRanges, req.body.kidsNames);
+        addFor(kUsers, object, function (success, error, document) {
+            var data = { "userId": document.id }
+            handleJSONResponse(200, error, success, data, res);
+        });
+    },
+
     createPublicFileURL: function (storageName) {
         return `http://storage.googleapis.com/${main.configs.firebaseStorageBucket}/${encodeURIComponent(storageName)}`;
     }, 
-
-    //  Generic page transitions
-    loadVenueUpload: function(res) {
-        loadView("main/twilio-upload", 200, genericSuccess, null, genericEmptyError, res);
-    },
-
-    loadSignupView: function(req, res) {
-        retrieve('venue-management', 'venues', function(success, error, data) {
-            var venues = data;
-            loadViewSignUp(200, success, venues, error, res);
-        });
-    },
 
     //  Visible API functions
     sendResponse: function(code, error, success, data, res) {
@@ -596,14 +509,6 @@ module.exports = {
             });
         });
         
-    },
-
-    createUser: function(req, res) {
-        var object = createEmptyUserObject(req.body.email, req.body.name, req.body.uid, req.body.type, req.body.kidsCount, req.body.maritalStatus, req.body.linkedin, req.body.facebook, req.body.instagram, req.body.ageRanges, req.body.kidsNames);
-        addFor(kUsers, object, function (success, error, document) {
-            var data = { "userId": document.id }
-            handleJSONResponse(200, error, success, data, res);
-        });
     },
 
     createUserMongoDB: function(req, res) {
