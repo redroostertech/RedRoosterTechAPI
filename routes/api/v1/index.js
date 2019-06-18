@@ -12,7 +12,7 @@ const mime                              = require('mime');
 const configs                           = require('../../../configs');
 
 //  Add projects below
-const dadhiveFunctions                  = require('../../functions/index');
+const apiFunctions                      = require('../../functions/index');
 
 const oneDay                            = configs.oneDay;
 
@@ -34,49 +34,71 @@ router.get('/test', function(req, res) {
     })
 });
 
+router.post('/login', function( req, res ) {
+    console.log(req.body);
+    apiFunctions.signin(req, res);
+});
+
 router.get('/getUsers', function(req, res) {
     console.log(req.body);
-    dadhiveFunctions.getUsers(req, res);
+    apiFunctions.getUsers(req, res);
 });
 
 router.post('/getUser', function(req, res) {
     console.log(req.body);
-    dadhiveFunctions.getUserWithId(req.body.userId, res);
+    apiFunctions.getUserWithId(req.body.userId, res);
 });
 
 router.post('/createUser', function(req, res) {
-    console.log(req.body);
-    dadhiveFunctions.createUser(req, res);
+    apiFunctions.signup(req, res, function(uid) {
+        if (uid === null) { 
+            var error = {
+                "code": 200,
+                "message": "Something went wrong. Please try again later."
+            }
+            console.log(error);
+            apiFunctions.sendResponse(200, error, null, null, res)
+        } else {
+            req.body.uid = uid
+            req.body.type = "1"
+            apiFunctions.createUser(req, res);
+        }
+    });
 });
 
 router.post('/createMatch', function(req, res) {
     console.log(req.body);
-    dadhiveFunctions.createMatch(req, res);
+    apiFunctions.createMatch(req, res);
 });
 
 router.post('/findMatch', function(req, res) {
     console.log(req.body);
-    dadhiveFunctions.findMatch(req, res);
+    apiFunctions.findMatch(req, res);
 });
 
 router.post('/findConversations', function(req, res) {
     console.log(req.body);
-    dadhiveFunctions.findConversations(req, res);
+    apiFunctions.findConversations(req, res);
 });
 
 router.post('/findConversation', function(req, res) {
     console.log(req.body);
-    dadhiveFunctions.findConversation(req.body.conversationId, res);
+    apiFunctions.findConversation(req.body.conversationId, res);
 });
 
 router.post('/getMessages', function(req, res) {
     console.log(req.body);
-    dadhiveFunctions.getMessagesInConversation(req.body.conversationId, res);
+    apiFunctions.getMessagesInConversation(req.body.conversationId, res);
 });
 
 router.post('/sendMessage', function(req, res) {
     console.log(req.body);
-    dadhiveFunctions.sendMessage(req, res);
+    apiFunctions.sendMessage(req, res);
+});
+
+router.post('/updateConversation', function(req, res) {
+    console.log(req.body);
+    apiFunctions.updateConversation(req, res);
 });
 
 router.post('/uploadPhoto', function(req, res) {
@@ -107,7 +129,7 @@ router.post('/uploadPhoto', function(req, res) {
                             finished();
                         } else {
                             var count = i+1;
-                            imageData["userProfilePicture_"+count+"_url"] = dadhiveFunctions.createPublicFileURL(uploadTo); 
+                            imageData["userProfilePicture_"+count+"_url"] = apiFunctions.createPublicFileURL(uploadTo); 
                             imageData["userProfilePicture_"+count+"_meta"] = null;
                             finished();
                         }
@@ -116,11 +138,68 @@ router.post('/uploadPhoto', function(req, res) {
             });
 
             function check() {
-                dadhiveFunctions.uploadPicture(imageData, res);
+                apiFunctions.uploadPicture(imageData, res);
             }
 
         }
     });
+});
+
+router.post('/saveLocation', function(req, res) {
+    console.log(req.body);
+    apiFunctions.saveLocationMongoDB(req, res);
+});
+
+router.post('/updateUserLocation', function(req, res) {
+    console.log(req.body);
+    apiFunctions.saveLocationMongoDB(req, res);
+});
+
+router.post('/getGroupMessages', function(req, res) {
+    console.log(req.body);
+    apiFunctions.getGroupMessages(req, res);
+})
+
+router.post('/getNearbyUsers', function(req, res) {
+    console.log(req.body);
+    apiFunctions.getUsersMongoDB(req, res);
+});
+
+router.post('/addToMap', function(req, res) {
+    console.log(req.body);
+    apiFunctions.createMapItem(req, res, function(itemId) {
+        req.body.itemId = itemId
+        apiFunctions.addToMap(req, res);
+    });
+});
+
+router.post('/retrieveForMap', function(req, res) {
+    console.log(req.body);
+    apiFunctions.retrieveForMap(req, res);
+});
+
+router.get('/deleteAllGeos', function(req, res) {
+    console.log(req.body);
+    apiFunctions.deleteAllMongoUserGeoElements(req, res);
+});
+
+router.post('/deleteGeo', function(req, res) {
+    console.log(req.body);
+    apiFunctions.deleteGeo(req, res);
+});
+
+router.post('/deleteGeosBut', function(req, res) {
+    req.body.ids = ["5cf87bf7178341c6ca36ca92", "5cf87f3c178341c6ca37481b"];
+    apiFunctions.deleteGeosBut(req, res);
+})
+
+router.get('/deleteAllActions', function(req, res) {
+    console.log(req.body);
+    apiFunctions.deleteAllMongoActionElements(req, res);
+});
+
+router.post('/deleteAction', function(req, res) {
+    console.log(req.body);
 });
 
 module.exports = router;
