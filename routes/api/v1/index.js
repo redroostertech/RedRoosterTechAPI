@@ -25,4 +25,17 @@ router.post('/leads/submitInquiry', function(request, response) {
     apiFunctions.submitInquiry(name, email, phone, message, company, response);
 });
 
+router.post('/leads/newsletter', function(request, response) {
+    let email = request.body.email;
+
+    if (!email) return response.status(200).json({
+        'status': 200,
+        'success': false,
+        'data': null,
+        'error_message': 'Something went wrong. Please try again.' 
+    });
+
+    apiFunctions.joinNewsletter(email, response);
+});
+
 module.exports = router;
