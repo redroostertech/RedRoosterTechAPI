@@ -5,7 +5,7 @@ dotenv.config();
 const path = require('path');
 
 module.exports = {
-    port: process.env.PORT || 3000,
+    port: process.env.PORT || 4567,
     siteTitle: process.env.SITE_TITLE || 'RedRooster Tech API',
     host: process.env.HOST || 'localhost',
     base: __dirname,
@@ -35,5 +35,7 @@ module.exports = {
     isLive: false,
     oneDay: 86400000,
     timeout: Number(process.env.TIMEOUT) || 72000000,
-    allowedOrigins: process.env.ALLOWED_ORIGINS
+    allowedOrigins: process.env.ALLOWED_ORIGINS.split(',')
 }
+
+console.log(process.env.ALLOWED_ORIGINS.split(','));

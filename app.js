@@ -23,7 +23,7 @@ app.use(express.static(configs.basePublic, {
     maxage: configs.oneDay * 21
 }));
 app.use(cors({
-    origin: configs.allowedOrigins
+    origin: [configs.allowedOrigins]
 }));
 
 var nodeCache = new NodeCache({ 
