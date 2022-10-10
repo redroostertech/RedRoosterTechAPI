@@ -24,7 +24,7 @@ app.use(express.static(configs.basePublic, {
 }));
 app.use(cors({
     origin: function (origin, callback) {
-        Logger.logEvent(`Origin allowed by CORs: ${origin}`);
+        Logger.logMessage(`Origin allowed by CORs: ${origin}`);
         if (configs.allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true)
         } else {
@@ -49,7 +49,7 @@ httpServer.setTimeout(configs.timeout);
 httpServer.timeout = configs.timeout;
 httpServer.agent = false;
 httpServer.listen(configs.port, function() {
-    Logger.logEvent(`${configs.siteTitle} is running on port: ${configs.port}.`);
+    Logger.logMessage(`${configs.siteTitle} is running on port: ${configs.port}.`);
     Logger.logMessage(`🚀🚀🚀 App: Server start Succeeded`);
     Logger.logMessage(`🚀🚀🚀 App: ${configs.siteTitle} running on on http://${configs.host}:${configs.port}.`);
     firebase.initializeFirebase();
