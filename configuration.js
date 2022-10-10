@@ -37,5 +37,3 @@ module.exports = {
     timeout: Number(process.env.TIMEOUT) || 72000000,
     allowedOrigins: process.env.ALLOWED_ORIGINS.split(',')
 }
-
-console.log(process.env.ALLOWED_ORIGINS.split(','));
