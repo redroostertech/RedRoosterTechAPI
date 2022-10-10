@@ -22,10 +22,9 @@ app.use(session({
 app.use(express.static(configs.basePublic, {
     maxage: configs.oneDay * 21
 }));
-
 app.use(cors({
     origin: function (origin, callback) {
-        console.log(`Origin allowed by CORs: ${origin}`);
+        Logger.logEvent(`Origin allowed by CORs: ${origin}`);
         if (configs.allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true)
         } else {
@@ -33,6 +32,7 @@ app.use(cors({
         }
     }
 }));
+app.use(Logger.logRequest);
 
 var nodeCache = new NodeCache({ 
     stdTTL: 0, 
@@ -49,7 +49,7 @@ httpServer.setTimeout(configs.timeout);
 httpServer.timeout = configs.timeout;
 httpServer.agent = false;
 httpServer.listen(configs.port, function() {
-    console.log(`${configs.siteTitle} is running on port: ${configs.port}.`);
+    Logger.logEvent(`${configs.siteTitle} is running on port: ${configs.port}.`);
     Logger.logMessage(`🚀🚀🚀 App: Server start Succeeded`);
     Logger.logMessage(`🚀🚀🚀 App: ${configs.siteTitle} running on on http://${configs.host}:${configs.port}.`);
     firebase.initializeFirebase();
