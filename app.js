@@ -7,6 +7,7 @@ const firebase              = require('./firebase.js');
 const configs               = require('./configuration');
 const session               = require('client-sessions');
 const NodeCache             = require('node-cache');
+const cors = require('cors');
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended:true }));
@@ -19,6 +20,9 @@ app.use(session({
 }));
 app.use(express.static(configs.basePublic, {
     maxage: configs.oneDay * 21
+}));
+app.use(cors({
+    origin: configs.allowedOrigins
 }));
 
 var nodeCache = new NodeCache({ 

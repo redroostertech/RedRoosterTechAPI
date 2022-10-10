@@ -1,5 +1,7 @@
 'use strict';
 
+let dotenv = require('dotenv');
+dotenv.config();
 const path = require('path');
 
 module.exports = {
@@ -31,5 +33,6 @@ module.exports = {
     s3bucket: process.env.AWS_S3_BUCKET || '',
     isLive: false,
     oneDay: 86400000,
-    timeout: Number(process.env.TIMEOUT) || 72000000
+    timeout: Number(process.env.TIMEOUT) || 72000000,
+    allowedOrigins: process.env.ALLOWED_ORIGINS
 }
