@@ -22,8 +22,16 @@ app.use(session({
 app.use(express.static(configs.basePublic, {
     maxage: configs.oneDay * 21
 }));
+
 app.use(cors({
-    origin: [configs.allowedOrigins]
+    origin: function (origin, callback) {
+        if (configs.allowedOrigins.indexOf(origin) !== -1) {
+            console.log(`Origin allowed by CORs: ${origin}`);
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    }
 }));
 
 var nodeCache = new NodeCache({ 
