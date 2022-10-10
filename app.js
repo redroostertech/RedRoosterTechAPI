@@ -8,6 +8,7 @@ const configs               = require('./configuration');
 const session               = require('client-sessions');
 const NodeCache             = require('node-cache');
 const cors = require('cors');
+const Logger = require('./Logger');
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended:true }));
@@ -41,7 +42,9 @@ httpServer.timeout = configs.timeout;
 httpServer.agent = false;
 httpServer.listen(configs.port, function() {
     console.log(`${configs.siteTitle} is running on port: ${configs.port}.`);
-    firebase.setup();
+    Logger.logMessage(`🚀🚀🚀 App: Server start Succeeded`);
+    Logger.logMessage(`🚀🚀🚀 App: ${configs.siteTitle} running on on http://${configs.host}:${configs.port}.`);
+    firebase.initializeFirebase();
 });
 
 module.exports.app = app;

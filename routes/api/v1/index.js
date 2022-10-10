@@ -14,8 +14,6 @@ router.post('/leads/submitInquiry', function(request, response) {
     let phone = request.body.phone;
     let message = request.body.message;
 
-    console.log(request);
-
     if (!name || !email || !phone || !message) return response.status(200).json({
         'status': 200,
         'success': false,
