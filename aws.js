@@ -1,7 +1,7 @@
 'use strict';
 
-const AWS                 = require('aws-sdk');
-const configs             = require('./configs.js');
+const AWS = require('aws-sdk');
+const configs = require('./configuration.js');
 
 var s3; 
 

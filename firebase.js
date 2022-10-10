@@ -2,7 +2,7 @@
 
 var firebase            = require('firebase');
 var admin               = require('firebase-admin');
-var configs             = require('./configs');
+var configs             = require('./configuration');
 var serviceAccount      = require(configs.firstoragefilename);  //  MARK:- Uncomment and provide url to service account .json file.
 const {Storage}         = require('@google-cloud/storage');
 
@@ -21,12 +21,12 @@ var firebaseRealtimeDB;
 
 var settings = { timestampsInSnapshots: true };
 var firebase_configuration = {
-    apiKey: process.env.FIRAPIKEY || configs.firapikey,
-    authDomain: process.env.FIRDOM || configs.firauthdomain,
-    databaseURL: process.env.FIRDBURL || configs.firdburl,
-    projectId: process.env.FIRPROJ || configs.firprojectid,
-    storageBucket: process.env.FIRSTOR || configs.firstoragebucket,
-    messagingSenderId: process.env.FIRMES || configs.firmessagingsenderid,
+    apiKey: configs.firapikey,
+    authDomain: configs.firauthdomain,
+    databaseURL: configs.firdburl,
+    projectId: configs.firprojectid,
+    storageBucket: configs.firstoragebucket,
+    messagingSenderId: configs.firmessagingsenderid,
 };
 
 function setupFirebaseApp(callback) {
