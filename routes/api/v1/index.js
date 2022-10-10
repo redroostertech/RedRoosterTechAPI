@@ -13,6 +13,7 @@ router.post('/leads/submitInquiry', function(request, response) {
     let email = request.body.email;
     let phone = request.body.phone;
     let message = request.body.message;
+    let company = request.body.company;
 
     if (!name || !email || !phone || !message) return response.status(200).json({
         'status': 200,
@@ -21,7 +22,7 @@ router.post('/leads/submitInquiry', function(request, response) {
         'error_message': 'Something went wrong. Please try again.' 
     });
 
-    apiFunctions.submitInquiry(name, email, phone, message, response);
+    apiFunctions.submitInquiry(name, email, phone, message, company, response);
 });
 
 module.exports = router;

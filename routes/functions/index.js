@@ -1,13 +1,14 @@
 const Randomstring = require('randomstring');
 const FirebaseManager = require('./Firebase+Helpers');
 
-module.exports.submitInquiry = function(name, email, phone, message, response) {
+module.exports.submitInquiry = function(name, email, phone, message, company, response) {
     let inquiry = {
         id: Randomstring.generate(26),
         name: name,
         email: email,
         phone: phone,
         message: message,
+        company: company,
         createdAt: new Date()
     }
 
